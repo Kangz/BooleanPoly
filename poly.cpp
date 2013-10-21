@@ -233,7 +233,7 @@ void Poly::setBit(unsigned i, Bit value) {
     //Note that it is free, simply changing the shll to shlq mnemonics.
     Block valueBlock = value;
 
-    this->inlineBlocks[i / BLOCK_SIZE] &= ~(1 << i);
+    this->inlineBlocks[i / BLOCK_SIZE] &= ~(((uint64_t)1) << i);
     this->inlineBlocks[i / BLOCK_SIZE] |= (valueBlock << i);
 }
 
