@@ -120,6 +120,10 @@ Poly Poly::operator-(const Poly& other) const {
     return *this + other;
 }
 
+Poly Poly::operator*(const Poly& other) const {
+    return this->multiplyKaratsuba32(other);
+}
+
 Poly Poly::operator&(const Poly& other) const {
     unsigned nBlocks = (std::max(this->size(), other.size()) + (BLOCK_SIZE - 1)) / BLOCK_SIZE;
     Poly p(nBlocks);

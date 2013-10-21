@@ -34,6 +34,7 @@ class Poly {
 
         Poly operator+(const Poly& other) const;
         Poly operator-(const Poly& other) const;
+        Poly operator*(const Poly& other) const;
         Poly operator&(const Poly& other) const;
         Poly operator|(const Poly& other) const;
         Poly operator^(const Poly& other) const;
