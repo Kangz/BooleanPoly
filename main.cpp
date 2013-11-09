@@ -197,7 +197,62 @@ void bench_shifts() {
     }
 }
 
+void bench_division() {
+    std::default_random_engine generator;
+    generator.seed(getNanoseconds());
+
+    std::uniform_int_distribution<int> degreeDistrib(0, 255);
+
+    std::vector<Poly> polys;
+
+    for (int i = 0;  i < 1000; i++) {
+        polys.push_back(Poly::random(degreeDistrib(generator), generator));
+    }
+
+    // 1 - Check Correctness of the division
+    {
+        int tries = 0;
+        int successes = 0;
+
+        for (Poly p1 : polys) {
+            for (Poly p2 : polys) {
+                tries ++;
+
+                Poly q, r;
+                p1.euclidianDivision(p2, q, r);
+
+                if ((p1 + q * p2 + r).size() == 0) {
+                    successes ++;
+                }
+            }
+        }
+
+        std::cout << "Division success ratio : (" << successes << "/" << tries << ")" << std::endl;
+    }
+
+    // 2 - Bench the division
+    {
+        int forceBench = 0;
+
+        auto start = std::chrono::high_resolution_clock::now();
+        for (Poly p1 : polys) {
+            for (Poly p2 : polys) {
+                Poly q, r;
+                p1.euclidianDivision(p2, q, r);
+                forceBench += r.degree() + q.degree();
+            }
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+
+        volatile int forceBench2 = forceBench;
+        (void) forceBench2;
+
+        std::cout << "Division took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << std::endl;
+    }
+}
+
 int main(){
     bench_multiply();
     bench_shifts();
+    bench_division();
 }

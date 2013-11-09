@@ -38,8 +38,8 @@ class Poly {
         Poly operator&(const Poly& other) const;
         Poly operator|(const Poly& other) const;
         Poly operator^(const Poly& other) const;
-        Poly operator<<(int i);
-        Poly operator>>(int i);
+        Poly operator<<(int i) const;
+        Poly operator>>(int i) const;
 
         int computeDegree();
 
@@ -50,6 +50,8 @@ class Poly {
         Poly multiplyKaratsuba32(const Poly& other) const;
         Poly multiplyKaratsuba16(const Poly& other) const;
         Poly multiplyKaratsuba8(const Poly& other) const;
+
+        void euclidianDivision(const Poly& b, Poly& q, Poly& r) const;
 
         void setBit(unsigned i, Bit value);
     private:

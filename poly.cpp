@@ -134,7 +134,7 @@ Poly Poly::operator^(const Poly& other) const {
     return p;
 }
 
-Poly Poly::operator<<(int i) {
+Poly Poly::operator<<(int i) const {
     int iMod = i % BLOCK_SIZE;
 
     // Handle this case separetaly because shifting by more (or equal) than the block size is an undefined op
@@ -177,7 +177,7 @@ Poly Poly::operator<<(int i) {
     return res;
 }
 
-Poly Poly::operator>>(int i) {
+Poly Poly::operator>>(int i) const {
     // Same ideas as operator<<
     int iMod = i % BLOCK_SIZE;
 
@@ -281,6 +281,24 @@ Poly Poly::multiplyKaratsuba16(const Poly& other) const {
 
 Poly Poly::multiplyKaratsuba32(const Poly& other) const {
     return this->doMultiplyKaratsuba(other, 32);
+}
+
+void Poly::euclidianDivision(const Poly& b, Poly& q, Poly& r) const {
+    r = *this;
+    q = Poly(this->degree() - b.size() + 1);
+
+    if (this->size() < b.size()) {
+        return;
+    }
+
+    Poly bShifted = b << (this->size() - b.size());
+
+    while (r.degree() >= b.degree()) {
+        bShifted = bShifted >> (bShifted.size() - r.size());
+        q.setBit(bShifted.size() - b.size(), 1);
+        r = r + bShifted;
+    }
+    q.computeDegree();
 }
 
 /*****************************************************************************\
@@ -464,7 +482,7 @@ Poly Poly::doMultiplyKaratsubaBig(const Poly& other, unsigned splitLimit) const 
     
     if (debug) {
         if ((this->multiplyNaively(other) + res).size() != 0) {
-            std::cout << "#################################################""Error in KaratsubaBig" << std::endl;
+            std::cout << "Error in KaratsubaBig" << std::endl;
         }else {
             std::cout << "Ok" << std::endl;
         }
