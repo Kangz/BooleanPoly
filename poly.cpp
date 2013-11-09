@@ -400,6 +400,9 @@ std::ostream& operator<<(std::ostream& os, const Poly& p) {
     os << "(";
     for (int i = p.size(); i-->0;) {
         os << p.bit(i);
+        if (i != 0 and i % Poly::BLOCK_SIZE == 0) {
+            os << ' ';
+        }
     }
     os << "] - " << p.degree();
 
