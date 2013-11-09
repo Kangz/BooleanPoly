@@ -15,9 +15,7 @@ Poly::Poly() {
     this->deg = -1;
 }
 
-Poly::Poly(unsigned numBlocks) {
-    //do nothing with numBlocks for now
-    (void) numBlocks;
+Poly::Poly(unsigned) {
 
     for (unsigned i = 0; i < NUM_INLINE_BLOCKS; i++) {
         this->inlineBlocks[i] = 0;
@@ -358,11 +356,11 @@ Poly Poly::doMultiplyKaratsuba(const Poly& other, unsigned splitLimit) const {
     return res;
 }
 
-Poly Poly::doMultiplyKaratsuba16(const Poly& other, unsigned splitLimit) const {
+Poly Poly::doMultiplyKaratsuba16(const Poly& other, unsigned) const {
     return Poly::fromInt(convolution_16_32(this->block(0), other.block(0)));
 }
 
-Poly Poly::doMultiplyKaratsuba32(const Poly& other, unsigned splitLimit) const {
+Poly Poly::doMultiplyKaratsuba32(const Poly& other, unsigned) const {
     return Poly::fromInt(convolution_32_64(this->block(0), other.block(0)));
 }
 
