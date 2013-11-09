@@ -136,6 +136,89 @@ Poly Poly::operator^(const Poly& other) const {
     return p;
 }
 
+Poly Poly::operator<<(int i) {
+    int iMod = i % BLOCK_SIZE;
+
+    // Handle this case separetaly because shifting by more (or equal) than the block size is an undefined op
+    // We just shift by blocks
+    if (iMod == 0) {
+        Poly res = this->leftBlockShifted(i / BLOCK_SIZE);
+        res.deg = this->degree() + i;
+        return res;
+    }
+
+    int resNBlocks = (this->size() + i + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    Poly res(resNBlocks);
+
+    int thisIndex = 0;
+    int resIndex = i / BLOCK_SIZE;
+
+    Block shiftedLow = this->block(thisIndex) << iMod;
+    res.setBlock(resIndex, shiftedLow);
+    resIndex ++;
+
+    Block nextHigh = this->block(thisIndex) >> (BLOCK_SIZE - iMod);
+
+    // For each block of res we gather
+    //  - The high part of the previous block of this
+    //  - The low part of the current block of this
+    // We don't need the high part of the last block of this because it is always 0
+    while(resIndex < resNBlocks) {
+        thisIndex ++;
+        res.setBlock(resIndex, res.block(resIndex) | nextHigh);
+
+        shiftedLow = this->block(thisIndex) << iMod;
+        nextHigh = this->block(thisIndex) >> (BLOCK_SIZE - iMod);
+
+        res.setBlock(resIndex, res.block(resIndex) | shiftedLow);
+
+        resIndex ++;
+    }
+
+    res.deg = this->degree() + i;
+    return res;
+}
+
+Poly Poly::operator>>(int i) {
+    // Same ideas as operator<<
+    int iMod = i % BLOCK_SIZE;
+
+    if (iMod == 0) {
+        Poly res = this->rightBlockShifted(i / BLOCK_SIZE);
+        res.deg = this->degree() - i;
+        return res;
+    }
+
+    int resNBlocks = (this->size() + i + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    Poly res(resNBlocks);
+
+    int nBlocks = this->numBlocks();
+
+    int resIndex = 0;
+    int thisIndex = i / BLOCK_SIZE;
+
+    Block nextHigh = this->block(thisIndex) >> iMod;
+
+    thisIndex ++;
+
+    while(thisIndex < nBlocks) {
+        res.setBlock(resIndex, res.block(resIndex) | nextHigh);
+
+        Block shiftedLow = this->block(thisIndex) << (BLOCK_SIZE - iMod);
+        nextHigh = this->block(thisIndex) >> iMod;
+
+        res.setBlock(resIndex, res.block(resIndex) | shiftedLow);
+
+        resIndex ++;
+        thisIndex ++;
+    }
+
+    res.setBlock(resIndex, res.block(resIndex) | nextHigh);
+
+    res.deg = this->degree() - i;
+    return res;
+}
+
 /*****************************************************************************\
 |*                                   Misc                                    *|
 \*****************************************************************************/ 

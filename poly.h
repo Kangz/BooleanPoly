@@ -38,6 +38,8 @@ class Poly {
         Poly operator&(const Poly& other) const;
         Poly operator|(const Poly& other) const;
         Poly operator^(const Poly& other) const;
+        Poly operator<<(int i);
+        Poly operator>>(int i);
 
         int computeDegree();
 
@@ -49,9 +51,9 @@ class Poly {
         Poly multiplyKaratsuba16(const Poly& other) const;
         Poly multiplyKaratsuba8(const Poly& other) const;
 
+        void setBit(unsigned i, Bit value);
     private:
         void setBlock(unsigned i, Block value);
-        void setBit(unsigned i, Bit value);
         void xorBit(unsigned i, Bit value);
 
         Poly doMultiplyKaratsuba(const Poly& other, unsigned splitLimit) const;
