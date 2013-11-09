@@ -70,5 +70,27 @@ class Poly {
 
 std::ostream& operator<<(std::ostream& os, const Poly& p);
 
+// Templates definitions
+
+template<typename Generator>
+Poly Poly::random(unsigned len, Generator& g) {
+    Poly res((len + (BLOCK_SIZE - 1)) / BLOCK_SIZE);
+
+    std::uniform_int_distribution<uint64_t> distrib;
+
+    for(unsigned i = 0; i < len / BLOCK_SIZE; i++) {
+        res.setBlock(i, distrib(g));
+    }
+
+    Block b = distrib(g);
+    b >>= (BLOCK_SIZE - len - 1);
+
+    res.setBlock(len / BLOCK_SIZE, b /*>> (BLOCK_SIZE - len - 1)*/);
+
+    res.setBit(len, 1);
+    res.computeDegree();
+
+    return res;
+}
 
 #endif //POLY_H
